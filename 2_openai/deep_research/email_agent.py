@@ -23,9 +23,16 @@ INSTRUCTIONS = """You are able to send a nicely formatted HTML email based on a 
 You will be provided with a detailed report. You should use your tool to send one email, providing the 
 report converted into clean, well presented HTML with an appropriate subject line."""
 
+from openai import AsyncOpenAI
+from agents import OpenAIChatCompletionsModel, Agent
+
+google_api_key = os.getenv('GEMINI_API_KEY') or os.getenv('GOOGLE_API_KEY')
+gemini_client = AsyncOpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=google_api_key)
+gemini_model = OpenAIChatCompletionsModel(model="gemini-2.5-flash", openai_client=gemini_client)
+
 email_agent = Agent(
     name="Email agent",
     instructions=INSTRUCTIONS,
     tools=[send_email],
-    model="gpt-4o-mini",
+    model=gemini_model,
 )
